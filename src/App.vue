@@ -3,6 +3,7 @@ import { onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useParkingStore } from '@/stores/parking'
 import HeaderBar from '@/components/HeaderBar.vue'
+import InstallPrompt from './components/InstallPrompt.vue'
 
 const store = useParkingStore()
 const route = useRoute()
@@ -21,5 +22,6 @@ const mainClass = computed(() => (route.name === 'history' ? 'p-0' : 'p-4'))
     <main :class="mainClass">
       <RouterView />
     </main>
+    <InstallPrompt />
   </div>
 </template>

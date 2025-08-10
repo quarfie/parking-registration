@@ -13,6 +13,54 @@ import {
   clearAuth,
 } from '@/lib/api'
 
+// --- offline caching helpers (localStorage) ---
+const CACHE_KEYS = {
+  account: 'parking:account',
+  history: 'parking:history',
+  makes: 'parking:makes',
+  rules: 'parking:rules',
+}
+
+function cacheSet(key, value) {
+  try {
+    const payload = { ts: Date.now(), value }
+    localStorage.setItem(key, JSON.stringify(payload))
+  } catch (e) {
+    // storage might be full or disabled; ignore
+    console.warn(`Failed to cache ${key}:`, e)
+  }
+}
+
+function cacheGet(key) {
+  try {
+    const raw = localStorage.getItem(key)
+    if (!raw) return null
+    const { value } = JSON.parse(raw)
+    // If data is too old, you can choose to ignore it by returning null.
+    // For now, we always return it so the app can show *something* offline.
+    // If you want TTL enforcement, uncomment below:
+    // if (Date.now() - ts > CACHE_TTL_MS) return null;
+    return value
+  } catch (e) {
+    console.warn(`Failed to retrieve cache for ${key}:`, e)
+    return null
+  }
+}
+
+function cacheRemove(key) {
+  try {
+    localStorage.removeItem(key)
+  } catch (e) {
+    // Ignore errors, e.g., if storage is full or disabled
+    console.warn(`Failed to remove cache for ${key}:`, e)
+  }
+}
+
+function cacheClearAll() {
+  Object.values(CACHE_KEYS).forEach(cacheRemove)
+}
+// --- end offline caching helpers ---
+
 function getDefaultRegistration() {
   const now = new Date()
   const pad = (n) => (n < 10 ? '0' : '') + n
@@ -84,7 +132,7 @@ export const useParkingStore = defineStore('parking', {
     confirmationMessage: '',
     submitting: false,
 
-    // sample data for now (will be replaced by API later)
+    // Data structure to hold fetched data
     data: {
       account: {},
       history: [],
@@ -177,6 +225,8 @@ export const useParkingStore = defineStore('parking', {
     logout() {
       this.auth = null
       clearAuth()
+      // Clear any cached API data so a new user doesn't see previous data
+      cacheClearAll()
       // Clear loaded data & UI flags so header summary hides immediately
       this.hasLoaded = false
       this.pinEntered = false
@@ -197,7 +247,6 @@ export const useParkingStore = defineStore('parking', {
       this.inputErrors = { plate: false, make: false, model: false, readRules: false }
     },
     async fetchAll() {
-      // fetch account, history, makes, rules in parallel
       this.loading = true
       this.error = ''
       try {
@@ -207,14 +256,43 @@ export const useParkingStore = defineStore('parking', {
           apiGetMakes(),
           apiGetRules(),
         ])
-        if (acct?.Data) this.data.account = acct.Data
-        if (hist?.Data) this.data.history = hist.Data
-        if (makes?.Data) this.data.makes = makes.Data
-        if (rules?.Data) this.data.rules = rules.Data.Rules
+
+        if (acct?.Data) {
+          this.data.account = acct.Data
+          cacheSet(CACHE_KEYS.account, acct.Data)
+        }
+        if (hist?.Data) {
+          this.data.history = hist.Data
+          cacheSet(CACHE_KEYS.history, hist.Data)
+        }
+        if (makes?.Data) {
+          this.data.makes = makes.Data
+          cacheSet(CACHE_KEYS.makes, makes.Data)
+        }
+        if (rules?.Data) {
+          this.data.rules = rules.Data.Rules
+          cacheSet(CACHE_KEYS.rules, this.data.rules)
+        }
         this.hasLoaded = true
       } catch (e) {
-        this.error = 'Failed to load data.'
-        console.error(e)
+        // Network failed → try cache
+        const cachedAccount = cacheGet(CACHE_KEYS.account)
+        const cachedHistory = cacheGet(CACHE_KEYS.history)
+        const cachedMakes = cacheGet(CACHE_KEYS.makes)
+        const cachedRules = cacheGet(CACHE_KEYS.rules)
+
+        if (cachedAccount || cachedHistory || cachedMakes || cachedRules) {
+          if (cachedAccount) this.data.account = cachedAccount
+          if (cachedHistory) this.data.history = cachedHistory
+          if (cachedMakes) this.data.makes = cachedMakes
+          if (cachedRules) this.data.rules = cachedRules
+          this.hasLoaded = true
+          this.error = ''
+          console.warn('Loaded data from offline cache')
+        } else {
+          this.error = 'Failed to load data.'
+          console.error(e)
+        }
       } finally {
         this.loading = false
       }
@@ -340,6 +418,10 @@ export const useParkingStore = defineStore('parking', {
             if (h?.Data) this.data.history = h.Data
           })(),
         ])
+
+        // Update cache with the fresh data
+        cacheSet(CACHE_KEYS.account, this.data.account)
+        cacheSet(CACHE_KEYS.history, this.data.history)
 
         return true
       } catch (err) {
