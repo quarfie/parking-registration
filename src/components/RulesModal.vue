@@ -24,7 +24,8 @@ function onBackdrop(e) {
         <span class="material-icons">close</span>
       </button>
       <div class="p-6">
-        <div v-html="data.rules" class="prose max-w-none"></div>
+        <div v-if="data.rules" v-html="data.rules" class="prose max-w-none"></div>
+        <div v-else class="text-sm text-gray-600">Unable to load rules at this time.</div>
       </div>
     </div>
   </div>

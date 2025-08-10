@@ -8,3 +8,4 @@ I created this app so I wouldn't have to use the visitor parking registration po
 - Forgot PIN
 - If profile is incomplete, require update before registration.
 - About the app
+- If zero registrations remain, hide the registration form (unclear if API would let you book ahead for next month)

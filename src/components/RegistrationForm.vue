@@ -216,27 +216,32 @@ function onSubmit() {
       />
       <label for="readRules" class="text-sm">
         I have read the
-        <a
-          href="#"
-          @click.prevent="store.showRulesModal = true"
-          class="text-indigo-600 underline cursor-pointer"
-          >rules</a
-        >
+        <template v-if="store.data.rules">
+          <a
+            href="#"
+            @click.prevent="store.showRulesModal = true"
+            class="text-indigo-600 underline cursor-pointer"
+            >rules</a
+          >
+        </template>
+        <template v-else> rules </template>
       </label>
     </div>
 
     <!-- Submit -->
     <button
       type="submit"
+      :disabled="store.submitting"
       :class="[
         'mt-2 w-full rounded py-2 font-semibold flex items-center justify-center gap-1',
+        store.submitting ? 'opacity-70 cursor-not-allowed' : '',
         isRegistrationFormValid
           ? 'bg-indigo-600 text-white hover:bg-indigo-700'
           : 'bg-gray-300 text-gray-400',
       ]"
     >
       <span class="material-icons">check_circle</span>
-      Submit
+      <span>{{ store.submitting ? 'Submitting…' : 'Submit' }}</span>
     </button>
   </form>
 </template>

@@ -86,45 +86,10 @@ export const useParkingStore = defineStore('parking', {
 
     // sample data for now (will be replaced by API later)
     data: {
-      account: {
-        AllocateAllDay: 10,
-        AllocateDay: 0,
-        AllocateNight: 0,
-        Email: 'bob@mydomain.com',
-        Name: 'JASON',
-        ParkingMonth: 0,
-        Phone: '555-555-5555',
-        PinId: 0,
-        PinNo: '555',
-        SuiteNo: '555',
-        TakenAllDay: 1,
-        TakenDay: 0,
-        TakenNight: 0,
-      },
-      history: [
-        {
-          ApartmentNo: '999',
-          ApplyTime: '2025-08-08 11:29',
-          Email: 'jason@test.com',
-          EndDate: '2025-08-08 15:00',
-          Make: 'Lexus',
-          Model: 'NX350H',
-          Phone: '555-555-5555',
-          PlateNo: 'ABC123',
-          Province: 'Ontario',
-          StartDate: '2025-08-08 11:29',
-          T24Hours: 1,
-          TDay: 0,
-          TNight: 0,
-          TotalCount: 1,
-        },
-      ],
-      makes: [
-        { Id: 1, Name: 'Toyota' },
-        { Id: 2, Name: 'Ford' },
-      ],
-      rules:
-        '<h2><strong>TSCC 2636 - 109OZ</strong></h2><h2><strong>109 Ossington Ave, Toronto, ON M6J 2Z2 is a as follows:</strong></h2><ul><li>Immediately register your vehicle after parking in the designated visitor spots on the&nbsp;<strong>P1 Garage Level</strong>.</li><li>Other rules</li></ul>',
+      account: {},
+      history: [],
+      makes: [],
+      rules: '',
     },
 
     registration: getDefaultRegistration(),
@@ -212,6 +177,24 @@ export const useParkingStore = defineStore('parking', {
     logout() {
       this.auth = null
       clearAuth()
+      // Clear loaded data & UI flags so header summary hides immediately
+      this.hasLoaded = false
+      this.pinEntered = false
+      this.data = {
+        account: {},
+        history: [],
+        //makes: [],
+        //rules: '',
+      }
+      this.readRules = false
+      this.showRulesModal = false
+      this.showConfirmation = false
+      this.confirmationMessage = ''
+      this.submitting = false
+
+      // Optional: reset the form too
+      this.registration = getDefaultRegistration()
+      this.inputErrors = { plate: false, make: false, model: false, readRules: false }
     },
     async fetchAll() {
       // fetch account, history, makes, rules in parallel
