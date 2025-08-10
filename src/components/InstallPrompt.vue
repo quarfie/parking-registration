@@ -3,7 +3,7 @@
   <div class="w-full flex items-start justify-center py-6 px-4">
     <button
       v-if="canInstall"
-      class="px-4 py-2 rounded-xl shadow text-white bg-blue-600 hover:bg-blue-700"
+      class="px-4 py-2 rounded-xl shadow text-white bg-blue-600 hover:bg-blue-700 install-button"
       @click="install"
     >
       Install App
@@ -12,9 +12,9 @@
     <!-- iOS Safari hint -->
     <div
       v-else-if="shouldShowIOSHint && showIOSHint"
-      class="fixed inset-x-3 bottom-3 rounded-xl bg-white/90 backdrop-blur shadow p-3 text-sm border"
+      class="fixed inset-x-3 bottom-3 rounded-xl bg-white/90 backdrop-blur shadow p-3 text-sm border install-banner"
     >
-      <div class="font-medium mb-1">Add to Home Screen</div>
+      <div class="font-medium mb-1">You can install this app to your device!</div>
       <p class="opacity-80">
         Open the <strong>Share</strong> menu
         <span aria-label="share icon">⎋</span>
@@ -39,10 +39,10 @@ async function install() {
 }
 </script>
 
-<style>
+<style scoped>
 /* Hide install UI when app runs as standalone */
 @media (display-mode: standalone) {
-  button,
+  .install-button,
   .install-banner {
     display: none !important;
   }

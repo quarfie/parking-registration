@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "build:icons": "pwa-asset-generator src/assets/icon-source.svg public/icons --background \"transparent\" --type png --maskable true --favicon true --manifest public/manifest.webmanifest --path \"/icons\""
+    "build:icons": "pwa-asset-generator src/assets/icon-source.svg public/icons --background \"transparent\" --type png --maskable true --favicon true --path \"/icons\""
   },
   "dependencies": {
     "pinia": "^3.0.3",
