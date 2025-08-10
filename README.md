@@ -1,35 +1,10 @@
 # parking-registration
 
-This template should help get you started developing with Vue 3 in Vite.
+I created this app so I wouldn't have to use the visitor parking registration portal for my building. It uses the official site's API under the hood, proxied through a Node server I set up to bypass CORS restrictions.
 
-## Recommended IDE Setup
+## TO DO
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+- Profile update page (name/email/phone/PIN)
+- Forgot PIN
+- If profile is incomplete, require update before registration.
+- About the app
