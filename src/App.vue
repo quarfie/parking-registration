@@ -26,9 +26,9 @@ const showFooter = computed(() => route.name !== 'login')
     </main>
     <InstallPrompt />
     <footer v-if="showFooter">
-      <div class="py-6 text-center text-sm text-gray-600 flex flex-col items-center gap-2">
+      <div class="pb-6 text-center text-sm text-gray-600 flex flex-col items-center gap-2">
         <img src="/logo.svg" alt="Logo" class="w-24 h-24 mx-auto" />
-        <p>Created for the 109OZ community by Jason Wood</p>
+        <p class="pt-2">Created for the 109OZ community by Jason Wood</p>
         <a
           href="https://github.com/quarfie/parking-registration"
           target="_blank"

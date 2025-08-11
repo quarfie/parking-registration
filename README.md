@@ -41,7 +41,3 @@ If you find any issue, please create an Issue in GitHub. Please note that the ru
 ## OTHER INFORMATION
 
 The front-end app is hosted by Netlify. It also depends on an API proxy which I built using Node-RED and hosted in AWS EC2. The app could break if the original app API is altered, and the app will break if I stop hosting the API proxy.
-
-## TO DO
-
-- If profile is incomplete, prompt to update before registration.

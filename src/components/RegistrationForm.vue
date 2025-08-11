@@ -306,5 +306,6 @@ function onSubmit() {
       <span class="material-icons">check_circle</span>
       <span>{{ store.submitting ? 'Submitting…' : 'Submit' }}</span>
     </button>
+    <div v-if="store.error" class="text-red-500 text-sm text-center mt-2">{{ store.error }}</div>
   </form>
 </template>

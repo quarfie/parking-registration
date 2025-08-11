@@ -438,7 +438,7 @@ export const useParkingStore = defineStore('parking', {
           EndTime: fmtTimeAMPM(start), // per your “same as start time”
           EndDate: fmtDateNoLeadingZeros(end),
           NoQty: reg.days,
-          ProvinceId: null, // as per your spec (if API expects a number, we can adjust)
+          //ProvinceId: , //Null doesn't work. need to exclude if not providing a provinceId
           ApplyTime: fmtApplyTime(now),
         }
 
@@ -471,7 +471,24 @@ export const useParkingStore = defineStore('parking', {
         return true
       } catch (err) {
         console.error(err)
-        this.error = 'Could not submit registration.'
+        let msg = 'Could not submit registration.'
+        // Try to extract server JSON error if available (e.g., validation title)
+        try {
+          // Some request() implementations include raw JSON in err.message like
+          // "HTTP 400: { ...json... }". Try to parse the JSON portion.
+          const m = typeof err?.message === 'string' ? err.message : ''
+          const start = m.indexOf('{')
+          const end = m.lastIndexOf('}')
+          if (start !== -1 && end !== -1 && end > start) {
+            const jsonText = m.slice(start, end + 1)
+            const obj = JSON.parse(jsonText)
+            msg = obj?.title || obj?.Error || msg
+          }
+        } catch (e) {
+          console.warn('Failed to parse error message JSON:', e)
+          // ignore parse errors, keep default msg
+        }
+        this.error = msg
         return false
       } finally {
         this.submitting = false

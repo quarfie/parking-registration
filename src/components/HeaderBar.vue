@@ -21,7 +21,7 @@ function logout() {
     <!-- Account summary -->
     <div
       v-if="hasLoaded && data.account && data.account.SuiteNo"
-      class="flex justify-center gap-4 text-sm py-1 items-center"
+      class="flex flex-wrap justify-center gap-4 gap-y-1 text-sm py-1 items-center text-center"
     >
       <span class="font-medium flex items-center gap-1">
         <span class="material-icons" aria-hidden="true">person</span>
