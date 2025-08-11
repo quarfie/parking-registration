@@ -64,7 +64,7 @@ async function onSubmit() {
 </script>
 
 <template>
-  <div class="w-full min-h-screen flex items-start justify-center py-6 px-4">
+  <div class="w-full flex items-start justify-center py-6 px-4">
     <div class="w-full max-w-md">
       <div class="bg-white shadow rounded-lg p-4 flex flex-col gap-4">
         <h2 class="text-xl font-semibold tracking-tight">Account</h2>

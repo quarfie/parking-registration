@@ -1,13 +1,16 @@
 <template>
-  <!-- Android / Desktop Chrome -->
-  <div class="w-full flex items-start justify-center py-6 px-4">
-    <button
+  <div>
+    <!-- Android / Desktop Chrome -->
+    <div
       v-if="canInstall"
-      class="px-4 py-2 rounded-xl shadow text-white bg-blue-600 hover:bg-blue-700 install-button"
-      @click="install"
+      class="fixed inset-x-3 bottom-3 rounded-xl bg-white/90 backdrop-blur shadow p-3 text-sm border install-banner"
     >
-      Install App
-    </button>
+      <div class="font-medium mb-1">You can install this app to your device!</div>
+      <div class="flex gap-3 mt-2">
+        <button class="text-blue-700 underline" @click="install">Install</button>
+        <button class="text-blue-700 underline" @click="dismissIOSHint">Dismiss</button>
+      </div>
+    </div>
 
     <!-- iOS Safari hint -->
     <div
