@@ -15,8 +15,10 @@ const router = createRouter({
 
 import { useParkingStore } from '@/stores/parking'
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const store = useParkingStore()
+
+  // Ensure auth is loaded from storage
   if (!store.auth) store.loadAuthFromStorage()
 
   const authed = !!store.auth?.Token
@@ -28,6 +30,24 @@ router.beforeEach((to) => {
 
   // Protect other routes
   if (!authed) return { name: 'login' }
+
+  // Ensure account data is loaded (needed to check completeness)
+  if (!store.hasLoaded) {
+    try {
+      await store.getData()
+    } catch (e) {
+      console.error('Failed to load account data:', e)
+    }
+  }
+
+  const acct = store.data?.account || {}
+  const missingProfile = !acct.Name || !acct.Email || !acct.Phone
+
+  // Force completion on Account page; allow navigating to Account, block others
+  if (missingProfile && to.name !== 'account') {
+    return { name: 'account', query: { reason: 'complete-profile' } }
+  }
+
   return true
 })
 

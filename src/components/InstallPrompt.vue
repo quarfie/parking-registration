@@ -17,7 +17,7 @@
       <div class="font-medium mb-1">You can install this app to your device!</div>
       <p class="opacity-80">
         Open the <strong>Share</strong> menu
-        <span aria-label="share icon">⎋</span>
+        <span class="material-icons" area-label="share icon">ios_share</span>
         and choose <strong>Add to Home Screen</strong>.
       </p>
       <button class="mt-2 text-blue-700 underline" @click="dismissIOSHint">Got it</button>

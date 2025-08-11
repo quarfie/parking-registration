@@ -122,7 +122,7 @@ async function onSubmit() {
 <template>
   <div class="min-h-[60vh] flex items-center justify-center px-4">
     <div class="bg-white shadow rounded-lg p-6 w-full max-w-xs flex flex-col items-center gap-4">
-      <img src="/favicon.svg" alt="Logo" class="w-24 h-24 mx-auto" />
+      <img src="/logo.svg" alt="Logo" class="w-24 h-24 mx-auto" />
 
       <!-- PIN login -->
       <template v-if="mode === 'pin'">

@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useParkingStore } from '@/stores/parking'
 
@@ -7,6 +7,41 @@ const emit = defineEmits(['submitted'])
 
 const store = useParkingStore()
 const { registration, data, readRules, inputErrors } = storeToRefs(store)
+
+// iOS detection (includes iPadOS Safari that reports as Mac)
+const isIOS =
+  typeof navigator !== 'undefined' &&
+  (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1))
+
+const makeFocused = ref(false)
+
+const filteredMakes = computed(() => {
+  const q = (registration.value.make || '').trim().toLowerCase()
+  if (!q) return []
+  const list = (data.value.makes || []).filter((m) => (m.Name || '').toLowerCase().includes(q))
+  return list.slice(0, 20) // cap results
+})
+
+const showMakeDropdown = computed(
+  () => isIOS && makeFocused.value && filteredMakes.value.length > 0,
+)
+
+function onSelectMake(item) {
+  registration.value.make = item.Name
+  clearError('make')
+  // close after select
+  makeFocused.value = false
+}
+const makeWrapper = ref(null)
+
+function onMakeBlur(e) {
+  // If focus is moving to something inside the make wrapper, keep it open.
+  const next = e.relatedTarget
+  if (makeWrapper.value && next instanceof Node && makeWrapper.value.contains(next)) return
+  // Otherwise (including iOS where relatedTarget may be null), close it.
+  makeFocused.value = false
+}
 
 // --- Helpers (local, can be moved to a utils file later) ---
 function parseDateTime(dateStr, timeStr) {
@@ -120,17 +155,45 @@ function onSubmit() {
     <!-- Make -->
     <div>
       <label class="block font-medium mb-1">Make <span class="text-red-500">*</span></label>
-      <input
-        list="makeList"
-        v-model="registration.make"
-        @input="clearError('make')"
-        :class="[
-          'border w-full py-2 px-3 rounded focus:outline-none focus:ring-2 focus:ring-indigo-400',
-          inputErrors.make ? 'ring-2 ring-red-500 border-red-500' : '',
-        ]"
-        autocomplete="off"
-        required
-      />
+
+      <!-- Wrapper so the custom dropdown can position under the input -->
+      <div class="relative" ref="makeWrapper">
+        <input
+          :list="isIOS ? null : 'makeList'"
+          v-model="registration.make"
+          @input="clearError('make')"
+          @focus="makeFocused = true"
+          @blur="onMakeBlur"
+          autocapitalize="none"
+          autocorrect="off"
+          spellcheck="false"
+          :class="[
+            'border w-full py-2 px-3 rounded focus:outline-none focus:ring-2 focus:ring-indigo-400',
+            inputErrors.make ? 'ring-2 ring-red-500 border-red-500' : '',
+          ]"
+          autocomplete="off"
+          required
+        />
+
+        <!-- iOS-only custom dropdown -->
+        <div
+          v-if="showMakeDropdown"
+          class="absolute z-10 mt-1 w-full bg-white border rounded shadow max-h-56 overflow-auto"
+        >
+          <button
+            v-for="m in filteredMakes"
+            :key="m.Id"
+            type="button"
+            class="w-full text-left px-3 py-2 hover:bg-indigo-50"
+            @mousedown.prevent="onSelectMake(m)"
+          >
+            <!-- mousedown so blur doesn't kill the click -->
+            {{ m.Name }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Keep native datalist for non‑iOS -->
       <datalist id="makeList">
         <option v-for="make in data.makes" :key="make.Id" :value="make.Name" />
       </datalist>
