@@ -20,17 +20,50 @@
         <span aria-label="share icon">⎋</span>
         and choose <strong>Add to Home Screen</strong>.
       </p>
-      <button class="mt-2 text-blue-700 underline" @click="showIOSHint = false">Got it</button>
+      <button class="mt-2 text-blue-700 underline" @click="dismissIOSHint">Got it</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { usePWAInstall } from '@/composables/usePWAInstall'
 
 const { canInstall, promptInstall, shouldShowIOSHint } = usePWAInstall()
 const showIOSHint = ref(true)
+
+const IOS_HINT_KEY = 'iosInstallHintDismissedAt'
+const HINT_TTL_MS = 30 * 24 * 60 * 60 * 1000 // 30 days
+
+function lsSet(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value))
+  } catch (e) {
+    console.error(`Failed to set localStorage key "${key}":`, e)
+  }
+}
+
+function lsGet(key) {
+  try {
+    const raw = localStorage.getItem(key)
+    return raw ? JSON.parse(raw) : null
+  } catch (e) {
+    console.error(`Failed to get localStorage key "${key}":`, e)
+    return null
+  }
+}
+
+function dismissIOSHint() {
+  lsSet(IOS_HINT_KEY, Date.now())
+  showIOSHint.value = false
+}
+
+onMounted(() => {
+  const ts = lsGet(IOS_HINT_KEY)
+  if (typeof ts === 'number' && Date.now() - ts < HINT_TTL_MS) {
+    showIOSHint.value = false
+  }
+})
 
 async function install() {
   await promptInstall()

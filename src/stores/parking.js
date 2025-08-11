@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import {
   apiLogin,
+  apiSaveMyAccount,
   apiGetAccount,
   apiGetHistory,
   apiGetMakes,
@@ -131,6 +132,8 @@ export const useParkingStore = defineStore('parking', {
     error: '',
     confirmationMessage: '',
     submitting: false,
+    accountSaving: false,
+    accountError: '',
 
     // Data structure to hold fetched data
     data: {
@@ -220,6 +223,48 @@ export const useParkingStore = defineStore('parking', {
         return false
       } finally {
         this.loading = false
+      }
+    },
+    async saveMyAccount({ name, email, phone, newPin }) {
+      this.accountSaving = true
+      this.accountError = ''
+      try {
+        const acct = this.data.account || {}
+        const payload = {
+          Name: name?.trim() ?? '',
+          Email: email?.trim() ?? '',
+          Phone: phone?.trim() ?? '',
+          ApartmentNo: acct.SuiteNo, // not editable, required by API
+          ...(newPin ? { NewPinNo: newPin.trim() } : {}),
+        }
+
+        const res = await apiSaveMyAccount(payload)
+
+        if (res?.StatusCode === 200 && res?.Data) {
+          // Refresh account so UI reflects latest info
+          const a = await apiGetAccount()
+          if (a?.Data) this.data.account = a.Data
+          return { ok: true, message: 'Your changes have been saved.' }
+        }
+
+        // Handle known error shapes
+        if (res?.errors) {
+          // validation object { Field: [messages...] }
+          const messages = Object.values(res.errors).flat().join(' ')
+          return { ok: false, message: messages || 'Validation failed.' }
+        }
+        if (res?.Error) {
+          return { ok: false, message: res.Error }
+        }
+        return { ok: false, message: 'Could not save changes.' }
+      } catch (err) {
+        // If server returned validation as JSON with 400 status, our request() throws — you can optionally
+        // parse here if your backend sends JSON bodies. For now, show generic error:
+        console.error('Save account error:', err)
+        this.accountError = 'Request failed.'
+        return { ok: false, message: 'Request failed.' }
+      } finally {
+        this.accountSaving = false
       }
     },
     logout() {

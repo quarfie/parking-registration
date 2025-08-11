@@ -39,6 +39,18 @@ async function request(path, { method = 'GET', body, auth = true } = {}) {
 export const apiLogin = (pinno) =>
   request(`/login/user`, { method: 'POST', body: { pinno }, auth: false })
 
+export const apiForgotSendEmail = (email) =>
+  request(`/login/sendemail/?email=${encodeURIComponent(email)}`, { auth: false })
+
+export const apiVerifyOtp = (email, otp) =>
+  request(`/login/verifyotp?email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}`, {
+    auth: false,
+  })
+
+// Account
+export const apiSaveMyAccount = (payload) =>
+  request(`/myaccount/save`, { method: 'POST', body: payload })
+
 // Data
 export const apiGetAccount = () => request(`/visitorparking/get`)
 export const apiGetHistory = () => request(`/previousparking/getpreviousparking`)
