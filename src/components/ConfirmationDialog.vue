@@ -18,7 +18,7 @@ function onBackdrop(e) {
     @click="onBackdrop"
   >
     <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-sm p-6 text-center flex flex-col gap-3">
-      <span class="material-icons text-green-500 text-6xl mb-2">check_circle</span>
+      <span class="material-icons text-green-500 mb-2" style="font-size: 72px">check_circle</span>
       <div class="text-lg mb-2 whitespace-pre-line">
         {{ message || 'Registration Created!' }}
       </div>

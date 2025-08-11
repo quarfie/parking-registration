@@ -409,7 +409,7 @@ export const useParkingStore = defineStore('parking', {
           start = new Date(y, (mo || 1) - 1, d || 1, hh || 0, mm || 0, 0, 0)
         }
 
-        const end = new Date(start.getTime() + reg.days * 24 * 60 * 60 * 1000)
+        const end = new Date(start.getTime() + reg.days * 24 * 60 * 60 * 1000 - 1000) // end is 24h later minus 1 second
 
         const payload = {
           // account fields
