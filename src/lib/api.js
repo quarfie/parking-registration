@@ -53,7 +53,10 @@ export const apiSaveMyAccount = (payload) =>
 
 // Data
 export const apiGetAccount = () => request(`/visitorparking/get`)
-export const apiGetHistory = () => request(`/previousparking/getpreviousparking`)
+export const apiGetHistory = () =>
+  request(
+    `/previousparking/getpreviousparking?fromDate=2025-1-1&toDate=2099-1-1&pageNumber=0&pageSize=10&sortColumn=StartDate&sortDirection=desc&searchText=`,
+  )
 export const apiGetMakes = () => request(`/visitorparking/getmake`)
 export const apiGetRules = () => request(`/buildingrules/get`)
 
