@@ -129,9 +129,9 @@ async function onSubmit() {
         <input
           id="pinNo"
           v-model="pin"
-          type="text"
+          type="password"
           maxlength="10"
-          autocomplete="off"
+          autocomplete="current-password"
           placeholder="Enter PIN"
           class="border w-full py-2 px-3 rounded focus:outline-none focus:ring-2 focus:ring-indigo-400 text-center"
           @keyup.enter="onSubmit"
