@@ -27,6 +27,12 @@ async function request(path, { method = 'GET', body, auth = true } = {}) {
     headers,
     body: body ? JSON.stringify(body) : undefined,
   })
+  if (res.status === 401) {
+    clearAuth()
+    window.location.href = '/'
+    console.warn('401 Unauthorized - redirecting to login')
+    return
+  }
   // consider non-2xx as errors
   if (!res.ok) {
     const text = await res.text().catch(() => '')

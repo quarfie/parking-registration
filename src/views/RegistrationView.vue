@@ -28,7 +28,7 @@ function handleHistory() {
 </script>
 
 <template>
-  <div class="w-full flex items-start justify-center py-6 px-4">
+  <div class="w-full flex items-start justify-center py-1 px-4">
     <div class="w-full max-w-md">
       <RegistrationForm @submitted="handleSubmitted" />
     </div>

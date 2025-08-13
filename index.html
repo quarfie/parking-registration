@@ -14,12 +14,16 @@
     <meta name="apple-mobile-web-app-title" content="Parking" />
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    <!-- Cloudflare Web Analytics -->
-    <script
-      defer
-      src="https://static.cloudflareinsights.com/beacon.min.js"
-      data-cf-beacon='{"token": "0727a005db0a409693c52ed4bfb8bfc8"}'
-    ></script>
+    <!-- Cloudflare Web Analytics (disabled on localhost) -->
+    <script>
+      if (!location.hostname.match(/^localhost$|^127\.0\.0\.1$/)) {
+        var s = document.createElement('script')
+        s.defer = true
+        s.src = 'https://static.cloudflareinsights.com/beacon.min.js'
+        s.setAttribute('data-cf-beacon', '{"token": "0727a005db0a409693c52ed4bfb8bfc8"}')
+        document.head.appendChild(s)
+      }
+    </script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Parking Registration</title>
