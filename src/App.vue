@@ -15,7 +15,7 @@ onMounted(async () => {
 
 const mainClass = computed(() => (route.name === 'history' ? 'p-0' : 'p-4'))
 
-const showFooter = computed(() => route.name !== 'login')
+const isLogin = computed(() => route.name == 'login')
 </script>
 
 <template>
@@ -25,9 +25,9 @@ const showFooter = computed(() => route.name !== 'login')
       <RouterView />
     </main>
     <InstallPrompt />
-    <footer v-if="showFooter">
+    <footer>
       <div class="pb-6 text-center text-sm text-gray-600 flex flex-col items-center gap-2">
-        <img src="/logo.svg" alt="Logo" class="w-24 h-24 mx-auto" />
+        <img v-if="!isLogin" src="/logo.svg" alt="Logo" class="w-24 h-24 mx-auto" />
         <p class="pt-2">Created for the 109OZ community by Jason Wood</p>
         <a
           href="https://github.com/quarfie/parking-registration"

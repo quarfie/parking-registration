@@ -44,7 +44,7 @@ function logout() {
       </button>
     </div>
 
-    <nav class="flex justify-center gap-3 text-sm pt-1">
+    <nav v-if="hasLoaded" class="flex justify-center gap-3 text-sm pt-1">
       <RouterLink to="/" class="text-indigo-700 hover:underline">Registration</RouterLink>
       <RouterLink to="/history" class="text-indigo-700 hover:underline">History</RouterLink>
       <RouterLink to="/account" class="text-indigo-700 hover:underline">Account</RouterLink>

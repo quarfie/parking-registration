@@ -27,10 +27,11 @@ async function request(path, { method = 'GET', body, auth = true } = {}) {
     headers,
     body: body ? JSON.stringify(body) : undefined,
   })
-  if (res.status === 401) {
+  if (res.status === 401 && path !== '/login/user') {
+    ;``
     clearAuth()
     window.location.href = '/'
-    console.warn('401 Unauthorized - redirecting to login')
+    console.warn('401 Unauthorized - redirecting to login - called: ', path)
     return
   }
   // consider non-2xx as errors
